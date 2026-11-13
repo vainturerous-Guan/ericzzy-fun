@@ -89,9 +89,9 @@
       sdemo.textContent = '先看一遍演示：一年级上册科学';
     }
   } else if (subject === 'morality') {
-    document.title = '小学道德与法治 · 中小学·高中知识图谱';
+    document.title = '道德与法治 · 中小学·高中知识图谱';
     var meye = document.querySelector('.eyebrow');
-    if (meye) meye.textContent = '道德与法治：小学一至六年级 · 统编版';
+    if (meye) meye.textContent = '道德与法治：小学一至六年级 · 初中七至九年级 · 统编版';
     var mprimary = document.querySelector('.hero-actions a.btn-primary');
     var mbrowse = document.querySelector('.hero-actions a.btn:not(.btn-primary)');
     if (mprimary) mprimary.setAttribute('href', 'diagnose/?subject=morality');
@@ -143,7 +143,7 @@
   } else if (subject === 'chemistry') {
     document.title = '化学 · 中小学·高中知识图谱';
     var ceye = document.querySelector('.eyebrow');
-    if (ceye) ceye.textContent = '化学：初中九年级 · 人教版';
+    if (ceye) ceye.textContent = '化学：初中九年级 · 高中必修第一、二册 · 人教版';
     var cprimary = document.querySelector('.hero-actions a.btn-primary');
     var cbrowse = document.querySelector('.hero-actions a.btn:not(.btn-primary)');
     if (cprimary) cprimary.setAttribute('href', 'diagnose/?subject=chemistry');
@@ -265,7 +265,7 @@
     }
     var wantEnglish = subject === 'english';
     var wantPhysics = subject === 'physics';
-    var wantPrimary = subject === 'science' || subject === 'morality';
+    var wantPrimary = subject === 'science';
     var wantHistory = subject === 'history';
     var wantGeography = subject === 'geography';
     var wantBiology = subject === 'biology';
@@ -313,8 +313,8 @@
       var href = subject !== 'math' ? 'explore/?subject=' + subject + '&grade=' + g : 'explore/?grade=' + g;
       addCard(g, g <= 6 ? '小学' : (wantPhysics ? '初中物理' : '初中'), CN[g] + '年级', g <= 6 ? 'is-primary' : 'is-junior', splitText, href);
     }
-    if (wantPrimary || subject === 'chinese') {
-      /* 语文到九年级（上下册），科学和道德与法治到六年级；都不加高中卡片 */
+    if (wantPrimary || subject === 'chinese' || subject === 'morality') {
+      /* 语文到九年级（上下册），科学到六年级，道德与法治到九年级；都不加高中卡片 */
     } else if (wantHistory) {
       /* 初中历史只到九年级 */
     } else if (wantGeography) {
@@ -322,7 +322,9 @@
     } else if (wantBiology) {
       /* 初中生物只到八年级，九年级没有生物课 */
     } else if (wantChemistry) {
-      /* 初中化学只开九年级，没有小学、七八年级和高中卡片 */
+      /* 化学：九年级 + 高中必修第一、二册，无小学、七八年级和选必卡片 */
+      addCard(10, '高中化学', '必修一', 'is-senior', '必修第一册', 'explore/?subject=chemistry&grade=10');
+      addCard(11, '高中化学', '必修二', 'is-senior', '必修第二册', 'explore/?subject=chemistry&grade=11');
     } else if (wantPhysics) {
       addCard(10, '高中物理', '必修一', 'is-senior', '必修第一册', 'explore/?subject=physics&grade=10');
       addCard(11, '高中物理', '必修二', 'is-senior', '必修第二册', 'explore/?subject=physics&grade=11');

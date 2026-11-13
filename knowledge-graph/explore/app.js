@@ -482,7 +482,7 @@
       box.replaceChildren(el('div', { class: 'detail-empty' },
         el('h1', { text: '选择一个知识点' }),
         el('p', { text: '可以搜索，也可以按年级、册、章展开。选中之后，中间只画它附近的先修，以及后面一层会用到它的知识点。' })));
-      document.title = subject === 'english' ? '知识图谱 · 英语' : subject === 'physics' ? '知识图谱 · 物理' : subject === 'chinese' ? '知识图谱 · 语文' : subject === 'science' ? '知识图谱 · 小学科学' : subject === 'morality' ? '知识图谱 · 小学道德与法治' : subject === 'history' ? '知识图谱 · 初中历史' : subject === 'geography' ? '知识图谱 · 初中地理' : subject === 'biology' ? '知识图谱 · 初中生物' : subject === 'chemistry' ? '知识图谱 · 初中化学' : '知识图谱 · 中小学·高中知识图谱';
+      document.title = subject === 'english' ? '知识图谱 · 英语' : subject === 'physics' ? '知识图谱 · 物理' : subject === 'chinese' ? '知识图谱 · 语文' : subject === 'science' ? '知识图谱 · 小学科学' : subject === 'morality' ? '知识图谱 · 道德与法治' : subject === 'history' ? '知识图谱 · 初中历史' : subject === 'geography' ? '知识图谱 · 初中地理' : subject === 'biology' ? '知识图谱 · 初中生物' : subject === 'chemistry' ? '知识图谱 · 化学' : '知识图谱 · 中小学·高中知识图谱';
       return;
     }
     var topic = byId.get(selected);
@@ -1056,18 +1056,17 @@
     }
     if (subject === 'morality') {
       document.querySelectorAll('#stage-tabs [data-stage]').forEach(function (button) {
-        var morStage = button.getAttribute('data-stage');
-        button.hidden = morStage === 'j' || morStage === 'h';
+        button.hidden = button.getAttribute('data-stage') === 'h';
       });
       var morGrade = $('fGrade');
       morGrade.replaceChildren();
       morGrade.append(el('option', { value: '', text: '全部年级' }));
-      [1, 2, 3, 4, 5, 6].forEach(function (g) {
+      [1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function (g) {
         morGrade.append(el('option', { value: String(g), text: CN[g] + '年级' }));
       });
       var morSample = $('pick-sample');
       if (morSample) morSample.textContent = '先看看「我向国旗敬个礼」';
-      document.title = '知识图谱 · 小学道德与法治';
+      document.title = '知识图谱 · 道德与法治';
       return;
     }
     if (subject === 'history') {
@@ -1120,18 +1119,17 @@
     }
     if (subject === 'chemistry') {
       document.querySelectorAll('#stage-tabs [data-stage]').forEach(function (button) {
-        var chemStage = button.getAttribute('data-stage');
-        button.hidden = chemStage === 'p' || chemStage === 'h';
+        button.hidden = button.getAttribute('data-stage') === 'p';
       });
       var chemGrade = $('fGrade');
       chemGrade.replaceChildren();
       chemGrade.append(el('option', { value: '', text: '全部年级' }));
-      [9].forEach(function (g) {
-        chemGrade.append(el('option', { value: String(g), text: CN[g] + '年级' }));
-      });
+      chemGrade.append(el('option', { value: '9', text: '九年级' }));
+      chemGrade.append(el('option', { value: '10', text: '必修第一册' }));
+      chemGrade.append(el('option', { value: '11', text: '必修第二册' }));
       var chemSample = $('pick-sample');
       if (chemSample) chemSample.textContent = '先看看「质量守恒定律」';
-      document.title = '知识图谱 · 初中化学';
+      document.title = '知识图谱 · 化学';
       return;
     }
     if (subject === 'chinese') {
@@ -1183,7 +1181,7 @@
   function applyQuery() {
     var params = new URLSearchParams(location.search);
     var gradeValue = params.get('grade') || '';
-    var gradeOk = isPrimaryChannel() ? /^[1-6]$/ : subject === 'english' ? /^(?:[3-9]|1[0-6])$/ : subject === 'physics' ? /^(?:[89]|1[0-5])$/ : subject === 'history' ? /^[7-9]$/ : subject === 'geography' || subject === 'biology' ? /^[78]$/ : subject === 'chemistry' ? /^9$/ : subject === 'chinese' ? /^[1-9]$/ : subject === 'science' || subject === 'morality' ? /^[1-6]$/ : /^(?:[1-9]|1[0-4])$/;
+    var gradeOk = isPrimaryChannel() ? /^[1-6]$/ : subject === 'english' ? /^(?:[3-9]|1[0-6])$/ : subject === 'physics' ? /^(?:[89]|1[0-5])$/ : subject === 'history' ? /^[7-9]$/ : subject === 'geography' || subject === 'biology' ? /^[78]$/ : subject === 'chemistry' ? /^(?:9|1[01])$/ : subject === 'chinese' ? /^[1-9]$/ : subject === 'science' ? /^[1-6]$/ : subject === 'morality' ? /^[1-9]$/ : /^(?:[1-9]|1[0-4])$/;
     if (gradeOk.test(gradeValue)) grade = gradeValue;
     var stageValue = params.get('stage') || '';
     if (stageValue === 'p' || stageValue === 'j' || stageValue === 'h') stage = stageValue;
