@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "updated": "2026-11-13",
+  "note": "第一期奖励仅作数值/图鉴收集展示，不改变答题规则。进度存浏览器 localStorage。",
+  "channels": {
+    "monster": {
+      "label": "小学生·打怪版",
+      "audience": "男孩版",
+      "concept": "不同年级的题目相当于不同等级的怪物；练完一个学科的内容获得对应装备。",
+      "rewards": {
+        "math": { "category": "武器", "examples": ["木剑", "铁剑", "骑士长枪", "龙牙之刃"] },
+        "chinese": { "category": "衣服", "examples": ["布衣", "皮甲", "锁子甲", "龙鳞战袍"] },
+        "english": { "category": "鞋子", "examples": ["草鞋", "皮靴", "疾风之靴", "闪电战靴"] },
+        "science": { "category": "武功秘籍", "examples": ["基础拳谱", "百草经", "机关图谱", "天工开物"] },
+        "morality": { "category": "武功秘籍", "examples": ["礼仪入门", "君子守则", "侠义心法", "浩然正气诀"] }
+      },
+      "defaultCategory": "武功秘籍"
+    },
+    "dressup": {
+      "label": "小学生·打扮版",
+      "audience": "女孩版",
+      "concept": "练习各学科内容，收集好看的装扮。",
+      "rewards": {
+        "math": { "category": "项链与头冠", "examples": ["贝壳项链", "珍珠项链", "星星发箍", "月光头冠"] },
+        "chinese": { "category": "衣服", "examples": ["碎花裙", "百褶裙", "云肩罗裙", "锦绣华服"] },
+        "english": { "category": "鞋子", "examples": ["帆布鞋", "小皮鞋", "蝴蝶结舞鞋", "水晶鞋"] },
+        "science": { "category": "配饰", "examples": ["四叶草发卡", "彩虹手链", "星球耳坠", "极光丝巾"] },
+        "morality": { "category": "配饰", "examples": ["微笑徽章", "友谊手环", "爱心胸针", "美德花环"] }
+      },
+      "defaultCategory": "配饰"
+    },
+    "teen": {
+      "label": "中学生·成就版",
+      "audience": "不分男女",
+      "concept": "无打怪和打扮内容，按诊断与练习记录授予本机成就称号；跨用户排名待登录机制上线。",
+      "rewards": {},
+      "achievements": [
+        { "id": "first-diagnose", "name": "初露锋芒", "rule": "完成第一次自适应诊断" },
+        { "id": "root-finder", "name": "追根溯源", "rule": "通过回溯找到一个薄弱根因并补学完成" },
+        { "id": "subject-clear", "name": "单科通关", "rule": "某学科某年级知识点全部达到掌握" },
+        { "id": "all-rounder", "name": "全科状元", "rule": "多个学科均有诊断记录且无薄弱点" }
+      ]
+    }
+  },
+  "subjects": {
+    "math": "数学", "chinese": "语文", "english": "英语", "science": "科学",
+    "morality": "道德与法治", "history": "历史", "geography": "地理",
+    "biology": "生物", "chemistry": "化学", "physics": "物理"
+  }
+}

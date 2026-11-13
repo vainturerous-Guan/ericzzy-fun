@@ -34,6 +34,7 @@
   var query = '';
   var aliasHitIds = new Set();
   var subject = 'math';
+  var channel = '';
   var upDepth = 2;
   var ancestorsOpen = false;
   var tipFromTap = false;
@@ -277,6 +278,74 @@
     return href + (href.indexOf('?') >= 0 ? '&' : '?') + 'subject=' + subject;
   }
 
+  /* 频道模式：monster/dressup 为小学频道（锁定小学学段、只放语数英科道），
+   * teen 为中学生成就版（全量内容）。从频道点「知识图谱」菜单仍回到全量图谱。 */
+  var PRIMARY_SUBJECTS = ['math', 'chinese', 'science', 'morality', 'english'];
+
+  function isPrimaryChannel() { return channel === 'monster' || channel === 'dressup'; }
+
+  function readChannel() {
+    var value = new URLSearchParams(location.search).get('channel');
+    return value === 'monster' || value === 'dressup' || value === 'teen' ? value : '';
+  }
+
+  function channelLabel() {
+    if (channel === 'monster') return '小学生 · 打怪版（男孩版）';
+    if (channel === 'dressup') return '小学生 · 打扮版（女孩版）';
+    if (channel === 'teen') return '中学生 · 成就版';
+    return '';
+  }
+
+  function channelNote() {
+    if (channel === 'teen') return '成就称号与排名功能陆续上线';
+    return '做题赢奖励，装备与图鉴收集功能陆续上线';
+  }
+
+  function channelLink(target, text) {
+    var href = './?channel=' + target;
+    if (subject !== 'math') href += '&subject=' + subject;
+    return el('a', { href: href, text: text });
+  }
+
+  function configureChannel() {
+    if (!channel) return;
+    document.body.classList.add('channel-' + channel);
+    var bar = el('div', { class: 'channel-bar' });
+    bar.append(el('span', { class: 'channel-name', text: '当前频道：' + channelLabel() }));
+    bar.append(el('span', { class: 'channel-note', text: channelNote() }));
+    var links = el('span', { class: 'channel-links' });
+    if (channel !== 'monster') links.append(channelLink('monster', '打怪版'));
+    if (channel !== 'dressup') links.append(channelLink('dressup', '打扮版'));
+    if (channel !== 'teen') links.append(channelLink('teen', '中学生'));
+    links.append(el('a', { href: './' + (subject === 'math' ? '' : '?subject=' + subject), text: '查看全部知识' }));
+    bar.append(links);
+    var header = document.querySelector('.site-header');
+    if (header && header.parentNode) header.parentNode.insertBefore(bar, header.nextSibling);
+    document.title = channelLabel() + ' · 知识图谱';
+    if (!isPrimaryChannel()) return;
+    stage = 'p';
+    var tabs = $('stage-tabs');
+    if (tabs) tabs.hidden = true;
+    document.querySelectorAll('.subject-link').forEach(function (link) {
+      var linkSubject = link.getAttribute('data-subject');
+      if (PRIMARY_SUBJECTS.indexOf(linkSubject) < 0) { link.hidden = true; return; }
+      link.setAttribute('href', './?subject=' + linkSubject + '&channel=' + channel);
+    });
+    var gradeSelect = $('fGrade');
+    gradeSelect.replaceChildren();
+    gradeSelect.append(el('option', { value: '', text: '全部年级' }));
+    [1, 2, 3, 4, 5, 6].forEach(function (g) {
+      gradeSelect.append(el('option', { value: String(g), text: CN[g] + '年级' }));
+    });
+  }
+
+  function emptyMessage() {
+    if (isPrimaryChannel() && subject === 'english' && (grade === '1' || grade === '2')) {
+      return '英语内容从三年级开始，一、二年级的基础内容正在筹备中，敬请期待。';
+    }
+    return '没有匹配的知识点。';
+  }
+
   function passFilter(topic) {
     if (subject === 'english') {
       if (stage === 'p' && topic.grade > 6) return false;
@@ -351,7 +420,7 @@
       });
       box.append(details);
     });
-    if (!shown) box.append(el('p', { class: 'muted', text: '没有匹配的知识点。', style: 'padding:12px' }));
+    if (!shown) box.append(el('p', { class: 'muted', text: emptyMessage(), style: 'padding:12px' }));
     $('count').textContent = '显示 ' + shown + ' / ' + topics.length;
   }
 
@@ -1114,12 +1183,17 @@
   function applyQuery() {
     var params = new URLSearchParams(location.search);
     var gradeValue = params.get('grade') || '';
-    var gradeOk = subject === 'english' ? /^(?:[3-9]|1[0-6])$/ : subject === 'physics' ? /^(?:[89]|1[0-5])$/ : subject === 'history' ? /^[7-9]$/ : subject === 'geography' || subject === 'biology' ? /^[78]$/ : subject === 'chemistry' ? /^9$/ : subject === 'chinese' ? /^[1-9]$/ : subject === 'science' || subject === 'morality' ? /^[1-6]$/ : /^(?:[1-9]|1[0-4])$/;
+    var gradeOk = isPrimaryChannel() ? /^[1-6]$/ : subject === 'english' ? /^(?:[3-9]|1[0-6])$/ : subject === 'physics' ? /^(?:[89]|1[0-5])$/ : subject === 'history' ? /^[7-9]$/ : subject === 'geography' || subject === 'biology' ? /^[78]$/ : subject === 'chemistry' ? /^9$/ : subject === 'chinese' ? /^[1-9]$/ : subject === 'science' || subject === 'morality' ? /^[1-6]$/ : /^(?:[1-9]|1[0-4])$/;
     if (gradeOk.test(gradeValue)) grade = gradeValue;
     var stageValue = params.get('stage') || '';
     if (stageValue === 'p' || stageValue === 'j' || stageValue === 'h') stage = stageValue;
     if (subject === 'chinese' && stage === 'h') stage = '';
     domain = params.get('domain') || '';
+    if (isPrimaryChannel()) {
+      stage = 'p';
+      var channelGrade = parseInt(grade, 10);
+      if (grade && !(channelGrade >= 1 && channelGrade <= 6)) grade = '';
+    }
   }
 
   function bootSelection() {
@@ -1345,7 +1419,10 @@
   }
 
   subject = readSubject();
+  channel = readChannel();
+  if (isPrimaryChannel() && PRIMARY_SUBJECTS.indexOf(subject) < 0) subject = 'math';
   configureSubject();
+  configureChannel();
   restoreDepth();
   syncDepthButtons();
   applyQuery();
